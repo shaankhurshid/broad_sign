@@ -5,7 +5,7 @@ library(data.table)
 library(plyr)
 
 # Load data
-load(file='/Volumes/medpop_afib/skhurshid/SIGN/phenos_complete_080320.RData')
+load(file='/Volumes/medpop_afib/skhurshid/SIGN/phenos_complete_121120.RData')
 
 # Function to convert linear predictor of logistic regression model to predicted risk
 pred_logistic <- function(score,intercept){

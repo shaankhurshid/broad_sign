@@ -6,7 +6,7 @@ library(plyr)
 library(rms)
 
 # Load pre-existing phenotype file from PREDICT-AF project
-load(file="/Volumes/medpop_afib/skhurshid/PRS/phenos_082819.RData")
+load(file="/Volumes/medpop_afib/skhurshid/PRS/phenos_complete_121120.RData")
 
 # Variable cleanup
 ## Fix BPs
@@ -16,7 +16,6 @@ phenos[,':='(sbp_20 = sbp0/20,dbp_10 = dbp0/10)]
 phenos[,active_smoker := ifelse(tobacco_phenotype=="Current",1,0)]
 
 ###################################################################### DEVELOP CLINICAL SCORES
-
 ## Completeness variables
 phenos[,charge_complete := ifelse(c(is.na(afagevisit0) | is.na(ht) | is.na (wt_all) |
                                       is.na(sbp_20) | is.na(dbp_10) |

@@ -31,8 +31,8 @@ phenos[,sign_complete := ifelse(c(is.na(age_5) | is.na(sex) | is.na(race_binary)
 phenos_complete <- phenos[sign_complete==1 & charge_complete==1]
 
 ## Remove exclusions
-withdrawals <- fread('/Volumes/medpop_afib/skhurshid/PRS/withdrawals_020420.csv') # UKBB withdrawals
-phenos_complete <- phenos_complete[!(ID %in% withdrawals$V1)]
+withdrawals <- fread('/Volumes/medpop_afib/skhurshid/phenotypes/withdrawals/w7089_20200820.csv') # UKBB withdrawals
+phenos_complete <- phenos_complete[!(ID %in% withdrawals$sample_id)]
 
 #################################### SIGN SCORE (for prevalent AF)
 ## Model prevalent AF
@@ -49,7 +49,7 @@ phenos_complete[sign_complete==1,sign := age_5*prevalent_sign$coefficients[2] + 
 #################################### CHARGE-AF (for prevalent AF)
 ## Model prevalent AF
 prevalent_charge <- glm(prevalent_Atrial_fibrillation_or_flutter_v2 ~ age_5 + race_binary + ht_10 + wt_15 + sbp_20
-                        + dbp_10 + active_smoker + bp_med_combined + Prevalent_Diabetes_All
+                        + dbp_10 + active_smoker + bp_med_combined + prevalent_Diabetes_All
                         + prevalent_Heart_Failure + prevalent_Myocardial_Infarction,family='binomial',data=phenos_complete)
 
 ## Make reweighted CHARGE score
@@ -99,10 +99,9 @@ sign_r2 <- c(lrm(prevalent_Atrial_fibrillation_or_flutter_v2 ~ sign,data=phenos_
 mod_af_charge <- glm(prevalent_Atrial_fibrillation_or_flutter_v2 ~ charge_rw_std,family='binomial',data=phenos_complete) 
 mod_af_sign <- glm(prevalent_Atrial_fibrillation_or_flutter_v2 ~ sign_std,family='binomial',data=phenos_complete) 
 ## Params
-hr_charge <- with(mod_af_charge,c(exp(coefficients[2]),exp(confint(mod_af_charge,'charge_rw_std')[1]),exp(confint(mod_af_charge,'charge_rw_std')[2])))
-hr_sign <- with(mod_af_sign,c(exp(coefficients[2]),exp(confint(mod_af_sign,'sign_std')[1]),exp(confint(mod_af_sign,'sign_std')[2])))
+or_charge <- with(mod_af_charge,c(exp(coefficients[2]),exp(confint(mod_af_charge,'charge_rw_std')[1]),exp(confint(mod_af_charge,'charge_rw_std')[2])))
+or_sign <- with(mod_af_sign,c(exp(coefficients[2]),exp(confint(mod_af_sign,'sign_std')[1]),exp(confint(mod_af_sign,'sign_std')[2])))
 AIC(prevalent_charge); AIC(prevalent_sign)
 
 # Save output
-save(phenos,file='/Volumes/medpop_afib/skhurshid/SIGN/phenos_080320.RData')
-save(phenos_complete,file='/Volumes/medpop_afib/skhurshid/SIGN/phenos_complete_080320.RData')
+save(phenos_complete,file='/Volumes/medpop_afib/skhurshid/SIGN/phenos_complete_121120.RData')
